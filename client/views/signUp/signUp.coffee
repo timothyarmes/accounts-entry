@@ -52,9 +52,14 @@ AccountsEntry.entrySignUpEvents = {
   'submit #signUp': (event, t) ->
     event.preventDefault()
 
+    return if Accounts._options.forbidClientAccountCreation
+    
+    trimInput = (val)->
+      val.replace /^\s*|\s*$/g, ""
+
     username =
       if t.find('input[name="username"]')
-        t.find('input[name="username"]').value.toLowerCase()
+        trimInput t.find('input[name="username"]').value
       else
         undefined
     if username and AccountsEntry.settings.usernameToLower then username = username.toLowerCase()
@@ -64,9 +69,6 @@ AccountsEntry.entrySignUpEvents = {
         t.find('input[name="signupCode"]').value
       else
         undefined
-
-    trimInput = (val)->
-      val.replace /^\s*|\s*$/g, ""
 
     email =
       if t.find('input[type="email"]')
@@ -157,7 +159,6 @@ AccountsEntry.entrySignUpEvents = {
             else
               Router.go AccountsEntry.settings.dashboardRoute
       else
-        console.log err
         Session.set 'entryError', t9n("error.signupCodeIncorrect")
         return
 }

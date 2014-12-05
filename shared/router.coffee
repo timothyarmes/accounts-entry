@@ -72,6 +72,7 @@ Router.map ->
       if AccountsEntry.settings.homeRoute
         Meteor.logout () ->
           Router.go AccountsEntry.settings.homeRoute
+      @next()
 
   @route 'entryResetPassword',
     path: 'reset-password/:resetToken'
@@ -84,8 +85,10 @@ Router.map ->
 exclusions = []
 _.each Router.routes, (route)->
   exclusions.push route.name
+  
 # Change the fromWhere session variable when you leave a path
 Router.onStop ->
-  # If the route is an entry route, no need to save it
-  if (!_.contains(exclusions, Router.current().route.name))
-    Session.set('fromWhere', Router.current().path)
+  if Meteor.isClient
+    # If the route is an entry route, no need to save it
+    if (!_.contains(exclusions, Router.current().route?.getName()))
+     Session.set('fromWhere', Router.current().path)

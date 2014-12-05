@@ -17,6 +17,9 @@ Meteor.startup ->
 
     entryCreateUser: (user) ->
       check user, Object
+      
+      return if Accounts._options.forbidClientAccountCreation
+
       profile = AccountsEntry.settings.defaultProfile || {}
       if user.username
         userId = Accounts.createUser
